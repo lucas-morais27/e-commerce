@@ -13,6 +13,8 @@ import ecommerce.dto.EstoqueBaixaDTO;
 import ecommerce.dto.PagamentoDTO;
 import ecommerce.entity.CarrinhoDeCompras;
 import ecommerce.entity.Cliente;
+import ecommerce.entity.ItemCompra;
+import ecommerce.entity.TipoCliente;
 import ecommerce.external.IEstoqueExternal;
 import ecommerce.external.IPagamentoExternal;
 import jakarta.transaction.Transactional;
@@ -28,7 +30,7 @@ public class CompraService {
 
 	@Autowired
 	public CompraService(CarrinhoDeComprasService carrinhoService, ClienteService clienteService,
-			IEstoqueExternal estoqueExternal, IPagamentoExternal pagamentoExternal) {
+						 IEstoqueExternal estoqueExternal, IPagamentoExternal pagamentoExternal) {
 		this.carrinhoService = carrinhoService;
 		this.clienteService = clienteService;
 
@@ -72,7 +74,49 @@ public class CompraService {
 	}
 
 	public BigDecimal calcularCustoTotal(CarrinhoDeCompras carrinho) {
-		// To-Do
-		return BigDecimal.ZERO;
+		if (carrinho == null || carrinho.getItens().isEmpty()) {
+			throw new IllegalArgumentException("Carrinho de compras vazio ou nulo.");
+		}
+
+		// Calcula o custo total dos itens no carrinho
+		BigDecimal totalItens = carrinho.getItens().stream()
+				.map(item -> item.getProduto().getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		// Aplica desconto nos itens, se aplicável
+		if (totalItens.compareTo(BigDecimal.valueOf(500)) > 0 && totalItens.compareTo(BigDecimal.valueOf(1000)) <= 0) {
+			totalItens = totalItens.multiply(BigDecimal.valueOf(0.9)); // 10% de desconto
+		} else if (totalItens.compareTo(BigDecimal.valueOf(1000)) > 0) {
+			totalItens = totalItens.multiply(BigDecimal.valueOf(0.8)); // 20% de desconto
+		}
+
+		// Calcula o peso total dos itens
+		BigDecimal pesoTotal = carrinho.getItens().stream()
+				.map(item -> BigDecimal.valueOf(item.getProduto().getPeso()) // Converte o peso para BigDecimal
+						.multiply(BigDecimal.valueOf(item.getQuantidade()))) // Multiplica pelo número de itens
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		// Calcula o custo do frete com base no peso total
+		BigDecimal frete;
+		if (pesoTotal.compareTo(BigDecimal.valueOf(5)) <= 0) {
+			frete = BigDecimal.ZERO;
+		} else if (pesoTotal.compareTo(BigDecimal.valueOf(10)) <= 0) {
+			frete = pesoTotal.multiply(BigDecimal.valueOf(2));
+		} else if (pesoTotal.compareTo(BigDecimal.valueOf(50)) <= 0) {
+			frete = pesoTotal.multiply(BigDecimal.valueOf(4));
+		} else {
+			frete = pesoTotal.multiply(BigDecimal.valueOf(7));
+		}
+
+		// Aplica descontos no frete com base no tipo de cliente
+		TipoCliente tipoCliente = carrinho.getCliente().getTipo();
+		if (tipoCliente == TipoCliente.OURO) {
+			frete = BigDecimal.ZERO;
+		} else if (tipoCliente == TipoCliente.PRATA) {
+			frete = frete.multiply(BigDecimal.valueOf(0.5)); // 50% de desconto
+		}
+
+		// Soma o custo dos itens com o frete
+		return totalItens.add(frete);
 	}
 }
