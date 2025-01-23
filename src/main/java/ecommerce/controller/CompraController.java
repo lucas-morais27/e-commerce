@@ -22,6 +22,9 @@ public class CompraController {
 	@PostMapping("/finalizar")
 	public ResponseEntity<CompraDTO> finalizarCompra(@RequestParam Long carrinhoId, @RequestParam Long clienteId) {
 		try {
+			if (carrinhoId == null || clienteId == null) {
+				throw new IllegalArgumentException("Parâmetros inválidos.");
+			}
 			CompraDTO compraDTO = compraService.finalizarCompra(carrinhoId, clienteId);
 			return ResponseEntity.ok(compraDTO);
 		} catch (IllegalArgumentException e) {
