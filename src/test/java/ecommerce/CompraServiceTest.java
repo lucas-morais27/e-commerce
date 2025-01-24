@@ -50,7 +50,6 @@ class CompraServiceTest {
         compraService = new CompraService(carrinhoService, clienteService, estoqueExternal, pagamentoExternal);
     }
 
-
     @Test
     void testCalcularCustoTotal_CarrinhoVazio() {
         CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
@@ -382,109 +381,6 @@ class CompraServiceTest {
         BigDecimal valorEsperado = valorItensComDesconto.add(frete);
         assertEquals(0, custoTotal.compareTo(valorEsperado));
     }
-
-
-    void testCalcularCustoTotal_Exatamente5kg(){
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        Cliente cliente = new Cliente();
-        cliente.setTipo(TipoCliente.BRONZE);
-        carrinho.setCliente(cliente);
-
-        Produto produto = new Produto(15L, "Produto A", "Descricao O", BigDecimal.valueOf(100), 5, null);
-        ItemCompra item = new ItemCompra(null, produto, 1L);
-        carrinho.setItens(Collections.singletonList(item));
-
-        BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho);
-
-        assertEquals(BigDecimal.valueOf(80), custoTotal); // Sem frete
-    };
-    void testCalcularCustoTotal_Exatamente10kg(){
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        Cliente cliente = new Cliente();
-        cliente.setTipo(TipoCliente.BRONZE);
-        carrinho.setCliente(cliente);
-
-        Produto produto = new Produto(16L, "Produto A", "Descricao P", BigDecimal.valueOf(100), 10, null);
-        ItemCompra item = new ItemCompra(null, produto, 1L);
-        carrinho.setItens(Collections.singletonList(item));
-
-        BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho);
-
-        assertEquals(BigDecimal.valueOf(100), custoTotal); // Sem frete
-    };
-    void testCalcularCustoTotal_Exatamente50kg(){
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        Cliente cliente = new Cliente();
-        cliente.setTipo(TipoCliente.BRONZE);
-        carrinho.setCliente(cliente);
-
-        Produto produto = new Produto(17L, "Produto A", "Descricao Q", BigDecimal.valueOf(100), 50, null);
-        ItemCompra item = new ItemCompra(null, produto, 1L);
-        carrinho.setItens(Collections.singletonList(item));
-
-        BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho);
-
-        assertEquals(BigDecimal.valueOf(200), custoTotal); // Sem frete
-    };
-    void testCalcularCustoTotal_ValorExatamente500SemDesconto(){
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        Cliente cliente = new Cliente();
-        cliente.setTipo(TipoCliente.BRONZE);
-        carrinho.setCliente(cliente);
-
-        Produto produto = new Produto(18L, "Produto A", "Descricao R", BigDecimal.valueOf(500), 5, null);
-        ItemCompra item = new ItemCompra(null, produto, 1L);
-        carrinho.setItens(Collections.singletonList(item));
-
-        BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho);
-
-        assertEquals(BigDecimal.valueOf(500), custoTotal); // Sem desconto
-    };
-    void testCalcularCustoTotal_ValorExatamente1000ComDesconto(){
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        Cliente cliente = new Cliente();
-        cliente.setTipo(TipoCliente.BRONZE);
-        carrinho.setCliente(cliente);
-
-        Produto produto = new Produto(19L, "Produto A", "Descricao S", BigDecimal.valueOf(1000), 5, null);
-        ItemCompra item = new ItemCompra(null, produto, 1L);
-        carrinho.setItens(Collections.singletonList(item));
-
-        BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho);
-
-        assertEquals(BigDecimal.valueOf(900.0), custoTotal); // 10% de desconto
-    };
-    void testFinalizarCompra_ErroPagamento(){
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        Cliente cliente = new Cliente();
-        cliente.setTipo(TipoCliente.BRONZE);
-        carrinho.setCliente(cliente);
-        Produto produto = new Produto(20L, "Produto A", "Descricao T", BigDecimal.valueOf(100), 5, null);
-        ItemCompra item = new ItemCompra(null, produto, 1L);
-        carrinho.setItens(Collections.singletonList(item));
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            compraService.finalizarCompra(carrinho.getId(), cliente.getId());
-        });
-
-        assertEquals("Erro ao processar pagamento.", exception.getMessage());
-    };
-    void testFinalizarCompra_ErroEstoque(){
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        Cliente cliente = new Cliente();
-        cliente.setTipo(TipoCliente.BRONZE);
-        carrinho.setCliente(cliente);
-        Produto produto = new Produto(21L, "Produto A", "Descricao U", BigDecimal.valueOf(100), 5, null);
-        ItemCompra item = new ItemCompra(null, produto, 1L);
-        carrinho.setItens(Collections.singletonList(item));
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            compraService.finalizarCompra(carrinho.getId(), cliente.getId());
-        });
-
-        assertEquals("Erro ao processar estoque.", exception.getMessage());
-    };
-
 
     @Test
     void finalizarCompra_Sucesso() {
