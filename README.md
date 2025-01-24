@@ -21,8 +21,8 @@ Certifique-se de ter as seguintes ferramentas instaladas:
     - Abra a IDE e selecione **Import Project**.
     - Escolha o arquivo `pom.xml` para importar como um projeto Maven.
 
-3. Adicione o plugin do PIT Mutation Testing ao arquivo pom.xml:
-   ```bash
+3. Verifique a presença do plugin do PIT Mutation Testing no arquivo pom.xml:
+   ```
    <plugin>
     <groupId>org.pitest</groupId>
     <artifactId>pitest-maven</artifactId>
@@ -62,6 +62,11 @@ Certifique-se de ter as seguintes ferramentas instaladas:
    ```bash
    mvn test
    ```
+   
+2. Certifique que todas as classes de testes foram listadas no diretório:
+   ```
+   target/test-classes/ecommerce
+   ```
 
 ## Verificação de Mutação
 
@@ -76,7 +81,13 @@ Certifique-se de ter as seguintes ferramentas instaladas:
    ```
 
 3. Abra o arquivo `index.html` no navegador para visualizar o relatório de mutação.
-
+4. Exemplo de conteúdo do relatório:
+   ![report.png](report.png)
 ---
 
 Siga estas etapas para garantir que o projeto esteja funcionando corretamente e que todos os testes estejam cobrindo os cenários esperados.
+
+## Identificação de Autoria
+
+- *Lucas Morais*
+- *Jonathan Julio*
