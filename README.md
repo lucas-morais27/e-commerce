@@ -1,6 +1,9 @@
 # Projeto E-commerce
 
-Este é um projeto de backend para um sistema de e-commerce. O projeto foi desenvolvido utilizando **Java** com **Spring Boot** e está estruturado como uma API REST.
+Este projeto trata da implementação de testes automatizados para a funcionalidade de finalização de compra em um sistema de e-commerce. O sistema foi estruturado como uma API REST.
+
+## Referência
+Para mais detalhes sobre o enunciado do trabalho, consulte o arquivo [Enunciado.md](./Enunciado.md), que fornece o contexto e as especificações completas para a implementação da funcionalidade de finalização de compra e os requisitos dos testes.
 
 ## Pré-requisitos
 
